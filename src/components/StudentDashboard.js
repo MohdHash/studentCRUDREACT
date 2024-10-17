@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import 'react-toastify/dist/ReactToastify.css';
 const StudentDashboard = () => {
   const [student, setStudent] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -124,7 +124,13 @@ const StudentDashboard = () => {
           )}
         </div>
       )}
+
+
+      <div className="  font-bold rounded-md w-fit m-5 bg-blue-500 p-4 text-white transition-all ease-in  hover:bg-slate-50 hover:text-blue-300 hover:border-blue-950  ">
+        <button onClick={()=>{navigate('/allStudents')}} >View All Students</button>
+      </div>
     </div>
+
   );
 };
 

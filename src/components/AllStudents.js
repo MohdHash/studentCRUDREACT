@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast , ToastContainer } from "react-toastify";
+import { toast  } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AllStudents = () => {
   const [students, setStudents] = useState([]);
   const navigate = useNavigate();
     const token = localStorage.getItem("token");
+
     
 
   useEffect(() => {
@@ -20,14 +22,16 @@ const AllStudents = () => {
         });
         setStudents(response.data);
       } catch (error) {
-        alert("Error fetching students");
+       toast("Error fetching students",100);
       }
     };
     fetchStudents();
-  }, []);
+  }, [token]);
+
+
 
   if(!token){
-    toast("User not logged in" , 2000);
+    toast("User not logged in" , 500);
     navigate("/login");
     return;
 }
