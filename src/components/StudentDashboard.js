@@ -3,17 +3,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+
 const StudentDashboard = () => {
   const [student, setStudent] = useState(null);
   const [editing, setEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
   const navigate = useNavigate();
-
   
-
   const token = localStorage.getItem("token");
   const studentId = localStorage.getItem("studentId"); // Retrieve studentId from local storage
-    console.log(studentId);
+  console.log(studentId);
+
   // Fetch student details by ID
   useEffect(() => {
     const fetchStudentDetails = async () => {
@@ -25,16 +25,35 @@ const StudentDashboard = () => {
         });
         setStudent(response.data);
       } catch (error) {
+        console.error("Error fetching student details", error.response.data);
         toast.error("Error fetching student details");
       }
     };
     fetchStudentDetails();
   }, [token, studentId]);
 
+  // Handle input changes
+  const handleInputChange = (e, field) => {
+    if (field === "dob") {
+      const formattedDate = new Date(e.target.value).toISOString().split("T")[0]; // Format as YYYY-MM-DD
+      setUpdatedData({ ...updatedData, [field]: formattedDate });
+    } else {
+      setUpdatedData({ ...updatedData, [field]: e.target.value });
+    }
+  };
+
   // Update student details
-  const handleUpdate = async () => {
+  // Update student details
+const handleUpdate = async () => {
+    const updatedStudentData = {
+      ...student, // Spread the existing student data
+      ...updatedData, // Overwrite with any updated fields
+    };
+  
+    console.log("Updated data being sent:", updatedStudentData); // Log data for debugging
+    
     try {
-      const response = await axios.put(`https://localhost:7110/api/Students/${studentId}`, updatedData, {
+      const response = await axios.put(`https://localhost:7110/api/Students/${studentId}`, updatedStudentData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,9 +62,11 @@ const StudentDashboard = () => {
       setEditing(false);
       toast.success("Updated successfully");
     } catch (error) {
+      console.error("Error updating details:", error.response.data);
       toast.error("Error updating details");
     }
-  };
+  };                                                    
+  
 
   // Delete student account
   const handleDelete = async () => {
@@ -54,12 +75,13 @@ const StudentDashboard = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+      });                                                                                                                                               
       localStorage.removeItem("token");
       localStorage.removeItem("studentId"); // Remove student ID from local storage
       navigate("/login");
       toast.success("Account deleted successfully");
     } catch (error) {
+      console.error("Error deleting account:", error.response.data);
       toast.error("Error deleting account");
     }
   };
@@ -101,9 +123,7 @@ const StudentDashboard = () => {
                     type="text"
                     name={field}
                     defaultValue={student[field]}
-                    onChange={(e) =>
-                      setUpdatedData({ ...updatedData, [field]: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange(e, field)}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
                 </div>
@@ -125,12 +145,10 @@ const StudentDashboard = () => {
         </div>
       )}
 
-
-      <div className="  font-bold rounded-md w-fit m-5 bg-blue-500 p-4 text-white transition-all ease-in  hover:bg-slate-50 hover:text-blue-300 hover:border-blue-950  ">
-        <button onClick={()=>{navigate('/allStudents')}} >View All Students</button>
+      <div className="font-bold rounded-md w-fit m-5 bg-blue-500 p-4 text-white transition-all ease-in hover:bg-slate-50 hover:text-blue-300 hover:border-blue-950">
+        <button onClick={() => navigate('/allStudents')}>View All Students</button>
       </div>
     </div>
-
   );
 };
 

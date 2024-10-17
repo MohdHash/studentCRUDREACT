@@ -23,7 +23,7 @@ const Header = () => {
 
 
   return (
-    <header className="bg-blue-600 p-4 flex justify-between items-center">
+    <header className="bg-blue-600 p-4 flex justify-between items-center ">
       <div className="text-white font-bold text-xl">Student Management</div>
       <nav >
        {needLogout && <Link to="/login" className="text-white mr-4">Logout</Link>}
